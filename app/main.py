@@ -3,30 +3,28 @@ users', setting a limit for incoming connections.
 """
 
 import os
+import yaml
 
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 
-import yaml
+this_dir = os.path.dirname(os.path.abspath(__file__))
+print(this_dir)
 
-def main():
+def get_server(config_file=os.path.join(this_dir, '../conf/ftp.conf')):
     # Instantiate a dummy authorizer for managing 'virtual' users
     authorizer = DummyAuthorizer()
 
-    # Define a new user having full r/w permissions and a read-only
-    # anonymous user
-    conf_file = file('../conf/dirs.conf', 'r')
-    # yaml.load(conf_file)
-    conf = yaml.load(conf_file)
+    conf_file = file(config_file, 'r')
+
+    conf = yaml.safe_load(conf_file)
     print(conf)
-    # print(conf.get(user))
+    # Create users
     for user in conf.get('users'):
         authorizer.add_user(user.get('name'), user.get('password'), user.get('dir'), perm=user.get('permission'))
 
-    # exit()
-
-    authorizer.add_user('user', '12345', os.getcwd(), perm='elradfmwM')
+    # TODO: implement anon user
     # authorizer.add_anonymous(os.getcwd())
 
     # Instantiate FTP handler class
@@ -34,17 +32,10 @@ def main():
     handler.authorizer = authorizer
 
     # Define a customized banner (string returned when client connects)
-    handler.banner = "pyftpdlib based ftpd ready."
-
-    # Specify a masquerade address and the range of ports to use for
-    # passive connections.  Decomment in case you're behind a NAT.
-
-    # handler.masquerade_address = '127.0.0.1'
-    handler.passive_ports = range(60000, 65535)
+    handler.banner = "simpleftp ready!"
 
     # Instantiate FTP server class and listen on 0.0.0.0:2121
     server = conf.get('server', {})
-
 
     handler.masquerade_address = server.get('masquerade_address', None)
     range_start = min(server.get('passive_ports', {}).get('start', 60000), 65535)
@@ -59,7 +50,9 @@ def main():
     # server.max_cons_per_ip = 5
 
     # start ftp server
-    server.serve_forever()
+    # server.serve_forever()
+    return server
 
 if __name__ == '__main__':
-    main()
+    server = get_server()
+    server.serve_forever()
