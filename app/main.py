@@ -12,15 +12,14 @@ from pyftpdlib.servers import FTPServer
 this_dir = os.path.dirname(os.path.abspath(__file__))
 print(this_dir)
 
-def get_server(config_file=os.path.join(this_dir, '../conf/ftp.conf')):
-    # Instantiate a dummy authorizer for managing 'virtual' users
-    authorizer = DummyAuthorizer()
+def get_server(conf=None, config_file=os.path.join(this_dir, '../conf/ftp.conf')):
 
     conf_file = file(config_file, 'r')
-
     conf = yaml.safe_load(conf_file)
     print(conf)
     # Create users
+    # Instantiate a dummy authorizer for managing 'virtual' users
+    authorizer = DummyAuthorizer()
     for user in conf.get('users'):
         authorizer.add_user(user.get('name'), user.get('password'), user.get('dir'), perm=user.get('permission'))
 
@@ -42,6 +41,9 @@ def get_server(config_file=os.path.join(this_dir, '../conf/ftp.conf')):
     range_end = server.get('passive_ports', {}).get('end', max((range_start + 5000), 65535))
     # import pdb; pdb.set_trace()
     handler.passive_ports = range(range_start, range_end)
+
+    handler.use_sendfile = server.get('use_sendfile', 'False')
+
     address = (server.get('address', ''), server.get('port', '2121'))
     server = FTPServer(address, handler)
 
