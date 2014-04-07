@@ -1,3 +1,4 @@
 pyftpdlib
 pyyaml
 pysendfile
+zdaemon

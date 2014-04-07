@@ -10,12 +10,14 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
-print(this_dir)
 
-def get_server(conf=None, config_file=os.path.join(this_dir, '../conf/ftp.conf')):
-
-    conf_file = file(config_file, 'r')
+def read_conf(config_file=os.path.join(this_dir, '../conf/ftp.conf')):
+    conf_file = open(config_file, 'r')
     conf = yaml.safe_load(conf_file)
+    return conf
+
+def get_server(conf=None):
+
     print(conf)
     # Create users
     # Instantiate a dummy authorizer for managing 'virtual' users
@@ -56,5 +58,5 @@ def get_server(conf=None, config_file=os.path.join(this_dir, '../conf/ftp.conf')
     return server
 
 if __name__ == '__main__':
-    server = get_server()
+    server = get_server(read_conf())
     server.serve_forever()
