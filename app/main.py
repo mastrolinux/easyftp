@@ -44,8 +44,6 @@ def get_server(conf=None):
     # import pdb; pdb.set_trace()
     handler.passive_ports = range(range_start, range_end)
 
-    handler.use_sendfile = server.get('use_sendfile', 'False')
-
     address = (server.get('address', ''), server.get('port', '2121'))
     server = FTPServer(address, handler)
 
