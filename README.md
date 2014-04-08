@@ -9,7 +9,7 @@ On Debian/Ubuntu
 
 Install the server
 
-    $ pip install -r requirements/common.txt
+    $ sudo pip install -r requirements/common.txt
     $ cp conf/ftp-example.conf conf/ftp.conf
 
 Now change your settings in the YAML file:
@@ -36,6 +36,6 @@ Now change your settings in the YAML file:
 
 Start the daemon:
 
-     $ zdaemon -C conf/zdeamon.conf start
+     $ zdaemon -C conf/zdaemon.conf start
 
 Enjoy!
