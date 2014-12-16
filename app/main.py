@@ -1,7 +1,6 @@
 """A basic FTP server which uses a DummyAuthorizer for managing 'virtual
 users', setting a limit for incoming connections.
 """
-from __future__ import with_statement
 
 import os
 import yaml
